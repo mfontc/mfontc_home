@@ -1,0 +1,16 @@
+startup_message off
+
+#
+#  Toggle 'fullscreen' or not.
+#
+bind f eval "caption splitonly" "hardstatus ignore"
+bind F eval "caption always"    "hardstatus alwayslastline"
+
+
+#
+# look and feel for the bottom two lines.
+#
+hardstatus alwayslastline
+caption    always "%3n %t%? @%u%?%? [%h]%?"
+hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..B} Load: %l %{..G} %H %{..Y} %d/%m %C%a "
+
