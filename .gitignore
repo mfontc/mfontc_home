@@ -1,5 +1,4 @@
 *.swp
 bin/local/*
 !bin/local/README.txt
-oh-my-zsh/.zsh_history
-oh-my-zsh/.zsh_hostname
+oh-my-zsh/.zsh_*

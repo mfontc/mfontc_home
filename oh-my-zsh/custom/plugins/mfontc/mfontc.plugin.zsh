@@ -2,11 +2,26 @@
 # Manuel Font Colonques - 2013-12-10
 # -----------------------------------------------------------------------------
 
+
+
+# -----------------------------------------------------------------------------
+# Hostname Titles
+
 local  ZSH_PROMPT_TITLE_FILE="${ZSH_MFONTC}/.zsh_hostname"
-local BASH_PROMPT_TITLE_FILE="~/.bash_hostname"
+local BASH_PROMPT_TITLE_FILE="${HOME}/.bash_hostname"
 
 [[ ! -f "$ZSH_PROMPT_TITLE_FILE" && -f "$BASH_PROMPT_TITLE_FILE" ]] && cp "$BASH_PROMPT_TITLE_FILE" "$ZSH_PROMPT_TITLE_FILE"
 export ZSH_PROMPT_TITLE="$( [ -f "$ZSH_PROMPT_TITLE_FILE" ] && cat "$ZSH_PROMPT_TITLE_FILE" )"
+
+
+
+# -----------------------------------------------------------------------------
+# Default prompt colors
+local ZSH_PROMPT_DEFAULT_COLORS="${ZSH_MFONTC}/.zsh_default_colors"
+
+export ZSH_PROMPT_BG="$(  [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f1 -d';' )"
+export ZSH_PROMPT_FG="$(  [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f2 -d';' )"
+export ZSH_PROMPT_FG0="$( [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f3 -d';' )"
 
 
 
