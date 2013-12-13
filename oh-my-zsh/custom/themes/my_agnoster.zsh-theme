@@ -9,27 +9,48 @@
 ### Default colors by hostname
 [ "$ZSH_PROMPT_BG" ]  || ZSH_PROMPT_BG='black'
 [ "$ZSH_PROMPT_FG" ]  || ZSH_PROMPT_FG='blue'
-[[ $UID -eq 0 ]] && [ "$ZSH_PROMPT_FG0" ] && ZSH_PROMPT_FG="$ZSH_PROMPT_FG0" || ZSH_PROMPT_FG0='yellow'
+[ "$ZSH_PROMPT_FG0" ] || ZSH_PROMPT_FG0='yellow'
+
+ZSH_PROMPT_FG_USER_AND_HOST=$( [[ $UID -eq 0 ]] && echo "$ZSH_PROMPT_FG0" || echo "$ZSH_PROMPT_FG" )
+ZSH_PROMPT_BG_GIT_CLEAN="$ZSH_PROMPT_FG"
+ZSH_PROMPT_BG_GIT_DIRTY="$ZSH_PROMPT_FG0"
 
 CURRENT_BG='NONE'
 R_CURRENT_BG='NONE'
 
-# SEGMENT_SEPARATOR='▶' ; R_SEGMENT_SEPARATOR=''
-SEGMENT_SEPARATOR='\ue0b0'
-SEGMENT_SEPARATOR_2='\ue0b1'
-R_SEGMENT_SEPARATOR='\ue0b2'
-R_SEGMENT_SEPARATOR_2='\ue0b3'
+case none"$LANG$LC_ALL$LC_CTYPE" in
+	(*utf8*|*UTF-8*)
+		# SEGMENT_SEPARATOR='▶' ; R_SEGMENT_SEPARATOR=''
+		SEGMENT_SEPARATOR='\ue0b0'
+		SEGMENT_SEPARATOR_2='\ue0b1'
+		R_SEGMENT_SEPARATOR='\ue0b2'
+		R_SEGMENT_SEPARATOR_2='\ue0b3'
 
-# GIT_BRANCH='' ; GIT_STAGED=' ∋ ' ; GIT_UNSTAGED=' ∌ '
-GIT_BRANCH='\ue0a0'
-GIT_STAGED='\u220B'
-GIT_UNSTAGED='\u220C'
-GIT_DIRTY='±'
+		# GIT_BRANCH='' ; GIT_STAGED=' ∋ ' ; GIT_UNSTAGED=' ∌ '
+		GIT_BRANCH='\ue0a0'
+		GIT_STAGED='\u220B '
+		GIT_UNSTAGED='\u220C '
+		GIT_DIRTY='±'
 
-# PROMPT_ERROR='❌' ; PROMPT_ROOT='⚡' ; PROMPT_BG_JOBS='⌛'
-PROMPT_ERROR='\u274C'
-PROMPT_ROOT='\u26A1'
-PROMPT_BG_JOBS='\u231B'
+		# PROMPT_ERROR='❌' ; PROMPT_ROOT='⚡' ; PROMPT_BG_JOBS='⌛'
+		PROMPT_ERROR='\u274C '
+		PROMPT_ROOT='\u26A1 '
+		PROMPT_BG_JOBS='\u231B '
+		;;
+	(*)
+		SEGMENT_SEPARATOR=''
+		SEGMENT_SEPARATOR_2='|'
+		R_SEGMENT_SEPARATOR=''
+		R_SEGMENT_SEPARATOR_2='|'
+		GIT_BRANCH='[CVS]'
+		GIT_STAGED='+ '
+		GIT_UNSTAGED='! '
+		GIT_DIRTY='±'
+		PROMPT_ERROR='! '
+		PROMPT_ROOT='# '
+		PROMPT_BG_JOBS='(bg) '
+		;;
+esac
 
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
@@ -85,7 +106,6 @@ r_prompt_end() {
 # RIGHT: Hostname
 r_prompt_hostname() {
 	if [[ -n "${ZSH_PROMPT_TITLE}" ]]; then
-		#r_prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "%(!.%{%F{yellow}%}.)${ZSH_PROMPT_TITLE}"
 		r_prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "${ZSH_PROMPT_TITLE}"
 	fi
 }
@@ -101,7 +121,7 @@ prompt_context() {
 	local user=`whoami`
 
 	if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-		prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "$user@%m"
+		prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG_USER_AND_HOST "$user@%m"
 	fi
 }
 
@@ -113,9 +133,9 @@ r_prompt_git() {
 		dirty=$(parse_git_dirty)
 		ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
 		if [[ -n $dirty ]]; then
-			r_prompt_segment $ZSH_PROMPT_FG0 $ZSH_PROMPT_BG
+			r_prompt_segment $ZSH_PROMPT_BG_GIT_DIRTY $ZSH_PROMPT_BG
 		else
-			r_prompt_segment $ZSH_PROMPT_FG $ZSH_PROMPT_BG
+			r_prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_BG
 		fi
 
 		setopt promptsubst
@@ -146,9 +166,9 @@ prompt_dir() {
 prompt_status() {
 	local symbols
 	symbols=()
-	[[ $RETVAL -ne 0 ]] && symbols+="%{%F{red}%}$PROMPT_ERROR"
-	[[ $UID -eq 0 ]] && symbols+="%{%F{$ZSH_PROMPT_FG}%}$PROMPT_ROOT"
-	[[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{cyan}%}$PROMPT_BG_JOBS"
+	[[ $RETVAL -ne 0 ]] && symbols+="%{%F{$ZSH_PROMPT_FG0}%}$PROMPT_ERROR"
+	[[ $UID -eq 0 ]] && symbols+="%{%F{$ZSH_PROMPT_FG0}%}$PROMPT_ROOT"
+	[[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="%{%F{$ZSH_PROMPT_FG0}%}$PROMPT_BG_JOBS"
 
 	[[ -n "$symbols" ]] && prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "$symbols"
 }
