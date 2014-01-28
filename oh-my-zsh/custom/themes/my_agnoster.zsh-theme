@@ -127,30 +127,32 @@ prompt_context() {
 
 # Git: branch/detached head, dirty status
 r_prompt_git() {
-	local ref dirty
-	if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-		ZSH_THEME_GIT_PROMPT_DIRTY="$GIT_DIRTY"
-		dirty=$(parse_git_dirty)
-		ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
-		if [[ -n $dirty ]]; then
-			r_prompt_segment $ZSH_PROMPT_BG_GIT_DIRTY $ZSH_PROMPT_BG
-		else
-			r_prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_BG
+	if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then
+		local ref dirty
+		if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
+			ZSH_THEME_GIT_PROMPT_DIRTY="$GIT_DIRTY"
+			dirty=$(parse_git_dirty)
+			ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
+			if [[ -n $dirty ]]; then
+				r_prompt_segment $ZSH_PROMPT_BG_GIT_DIRTY $ZSH_PROMPT_BG
+			else
+				r_prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_BG
+			fi
+
+			setopt promptsubst
+			autoload -Uz vcs_info
+
+			zstyle ':vcs_info:*' enable git
+			zstyle ':vcs_info:*' get-revision true
+			zstyle ':vcs_info:*' check-for-changes true
+			zstyle ':vcs_info:*' stagedstr "$GIT_STAGED"
+			zstyle ':vcs_info:git:*' unstagedstr "$GIT_UNSTAGED"
+			zstyle ':vcs_info:*' formats ' %u%c'
+			zstyle ':vcs_info:*' actionformats '%u%c'
+			vcs_info
+			echo -n "${ref/refs\/heads\//$GIT_BRANCH }${vcs_info_msg_0_}"
+			#echo -n "${ref/refs\/heads\//$GIT_BRANCH }$dirty"
 		fi
-
-		setopt promptsubst
-		autoload -Uz vcs_info
-
-		zstyle ':vcs_info:*' enable git
-		zstyle ':vcs_info:*' get-revision true
-		zstyle ':vcs_info:*' check-for-changes true
-		zstyle ':vcs_info:*' stagedstr "$GIT_STAGED"
-		zstyle ':vcs_info:git:*' unstagedstr "$GIT_UNSTAGED"
-		zstyle ':vcs_info:*' formats ' %u%c'
-		zstyle ':vcs_info:*' actionformats '%u%c'
-		vcs_info
-		echo -n "${ref/refs\/heads\//$GIT_BRANCH }${vcs_info_msg_0_}"
-		#echo -n "${ref/refs\/heads\//$GIT_BRANCH }$dirty"
 	fi
 }
 
