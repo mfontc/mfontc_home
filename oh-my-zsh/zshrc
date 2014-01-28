@@ -34,11 +34,11 @@ ZSH_THEME="my_agnoster"
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Plugins
-[[ $UID -eq 0 ]] && {
+if (( $UID == 0 )); then
 	plugins=(mfontc colorize colored-man command-not-found wd extract encode64)
-} || {
+else
 	plugins=(mfontc colorize colored-man command-not-found wd extract encode64 git git-extras composer symfony2 )
-}
+fi
 
 source $ZSH/oh-my-zsh.sh
 
