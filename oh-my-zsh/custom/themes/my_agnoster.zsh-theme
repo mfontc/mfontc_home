@@ -180,10 +180,10 @@ build_prompt() {
 	prompt_time
 	prompt_end
 	echo
+	prompt_status
 	prompt_context
 	prompt_dir
 	prompt_git
-	prompt_status
 	prompt_end
 }
 
