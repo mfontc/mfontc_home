@@ -1,0 +1,87 @@
+" >= 5.0
+if version >= 500
+	" Meta ----------------------------------------------------------------
+	" clear all autocommands! (this comment must be on its own line)
+	autocmd!
+	set nocompatible		" break away from old vi compatibility
+	"set fileformats=unix,dos,mac	" support all three newline formats
+	"set viminfo=			" don't use or save viminfo files
+
+	" Console UI & Text display -------------------------------------------
+	syntax on			" Syntax Highlighting3
+	set showmode			" If in Insert, Replace or Visual mode put a message on the last line.
+	set cmdheight=1			" explicitly set the height of the command line
+	set showcmd			" Show (partial) command in status line
+	set number			" show line numbers
+	set ruler			" show current position at bottom
+	set tabstop=8			" 8 spaces
+	set scrolloff=7			" keep at least «x» lines around the cursor
+	"set wrap			" soft wrap long lines
+	set nowrap			" no wrap long lines
+	set showbreak=\|		" Mark too long lines
+	set whichwrap=<,>		" Cursor key move the cursor to the next/previous line if pressed at the end/beginning of a line
+	set list			" show invisible characters
+	set listchars=tab:¯˙,trail:×	" but only show tabs and trailing whitespace
+	set wildmenu			" turn on wild menu :e <Tab>
+	set wildmode=list:longest	" set wildmenu to list choice
+
+	" Nice statusbar
+	set laststatus=2
+	set statusline=
+	set statusline+=%-3.3n\ 				" buffer number
+	set statusline+=%f\ 					" file name
+	set statusline+=%h%m%r%w 				" flags
+	set statusline+=\[%{strlen(&ft)?&ft:'none'},		" filetype
+	set statusline+=%{&encoding},				" encoding
+	set statusline+=%{&fileformat}]\ 			" file format
+	"set statusline+=%{strftime('[%Y-%m-%d\ %H:%M]')}	" hour
+	set statusline+=%=					" right align
+	set statusline+=0x%-5B\ 				" current char
+	set statusline+=%-10.(%l,%c%V%)\ %<%P			" offset
+
+	" Text editing and searching behavior ---------------------------------
+	set hlsearch			" turn on highlighting for searched expressions
+	set hl=l:Visual			" use Visual mode's highlighting scheme --much better
+	set incsearch			" highlight as we search however
+	set ignorecase			" set case insensitivity
+	set smartcase			" unless there's a capital letter
+	set completeopt=menu,longest,preview	" more autocomplete <Ctrl>-P options
+	set nostartofline		" leave my cursor position alone!
+	set backspace=2			" equiv to :set backspace=indent,eol,start
+	set showmatch			" show matching brackets
+	set cursorline			" highlight current line as:
+
+	map <F2> :set number! wrap! list! cursorline!<CR>
+	map <F3> :if exists("syntax_on") <Bar> syntax off <Bar> else <Bar> syntax on <Bar> endif <CR>
+endif
+
+" >= 7.3
+if v:version >= 703
+	" 256-color Mode
+	:set t_Co=256
+	:colorscheme desert
+
+	set colorcolumn=81,161
+	highlight ColorColumn ctermbg=NONE cterm=INVERSE
+
+	"set showtabline=2
+	map . <Esc>:tabn<CR>
+	map , <Esc>:tabp<CR>
+	                      highlight TabLine     ctermbg=15 ctermfg=0 cterm=NONE
+	                      highlight TabLineSel  ctermbg=0  ctermfg=7
+	autocmd InsertEnter * highlight TabLineSel  ctermbg=0  ctermfg=1
+	autocmd InsertLeave * highlight TabLineSel  ctermbg=0  ctermfg=7
+	                      highlight TabLineFill            ctermfg=15
+
+	" statusline highlight (colors)
+	                      highlight StatusLine   ctermbg=0 ctermfg=7 gui=bold
+	                      highlight StatusLineNC ctermbg=0 ctermfg=7 gui=bold
+	autocmd InsertEnter * highlight StatusLine   ctermbg=0 ctermfg=1 gui=bold
+	autocmd InsertLeave * highlight StatusLine   ctermbg=0 ctermfg=7 gui=bold
+
+	" In many terminal emulators the mouse works just fine, thus enable it.
+	if has('mouse')
+		set mouse=a
+	endif
+endif
+

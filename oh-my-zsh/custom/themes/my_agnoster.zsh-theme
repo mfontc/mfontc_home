@@ -22,9 +22,9 @@ case none"$LANG$LC_ALL$LC_CTYPE" in
 	(*utf8*|*UTF-8*)
 		# SEGMENT_SEPARATOR='▶' ; R_SEGMENT_SEPARATOR=''
 		SEGMENT_SEPARATOR='\ue0b0'
-		SEGMENT_SEPARATOR_2='\ue0b1'
+		#SEGMENT_SEPARATOR_2='\ue0b1'
 		R_SEGMENT_SEPARATOR='\ue0b2'
-		R_SEGMENT_SEPARATOR_2='\ue0b3'
+		#R_SEGMENT_SEPARATOR_2='\ue0b3'
 
 		# GIT_BRANCH='' ; GIT_STAGED=' ∋ ' ; GIT_UNSTAGED=' ∌ '
 		GIT_BRANCH='\ue0a0'
@@ -39,9 +39,9 @@ case none"$LANG$LC_ALL$LC_CTYPE" in
 		;;
 	(*)
 		SEGMENT_SEPARATOR=''
-		SEGMENT_SEPARATOR_2='|'
+		#SEGMENT_SEPARATOR_2='|'
 		R_SEGMENT_SEPARATOR=''
-		R_SEGMENT_SEPARATOR_2='|'
+		#R_SEGMENT_SEPARATOR_2='|'
 		GIT_BRANCH='[CVS]'
 		GIT_STAGED='+ '
 		GIT_UNSTAGED='! '
@@ -70,18 +70,18 @@ prompt_segment() {
 }
 
 # Begin a right-segment
-r_prompt_segment() {
-	local bg fg
-	[[ -n $1 ]] && bg="%K{$1}" || bg="%k"
-	[[ -n $2 ]] && fg="%F{$2}" || fg="%f"
-	if [[ $1 != $R_CURRENT_BG ]]; then
-		echo -n " %{%F{$1}%K{$R_CURRENT_BG}%}$R_SEGMENT_SEPARATOR%{$bg%}%{$fg%} "
-	else
-		echo -n " %{$bg%}%{$fg%}$R_SEGMENT_SEPARATOR_2 "
-	fi
-	R_CURRENT_BG=$1
-	[[ -n $3 ]] && echo -n $3
-}
+#r_prompt_segment() {
+#	local bg fg
+#	[[ -n $1 ]] && bg="%K{$1}" || bg="%k"
+#	[[ -n $2 ]] && fg="%F{$2}" || fg="%f"
+#	if [[ $1 != $R_CURRENT_BG ]]; then
+#		echo -n " %{%F{$1}%K{$R_CURRENT_BG}%}$R_SEGMENT_SEPARATOR%{$bg%}%{$fg%} "
+#	else
+#		echo -n " %{$bg%}%{$fg%}$R_SEGMENT_SEPARATOR_2 "
+#	fi
+#	R_CURRENT_BG=$1
+#	[[ -n $3 ]] && echo -n $3
+#}
 
 # End the prompt, closing any open segments
 prompt_end() {
@@ -91,29 +91,25 @@ prompt_end() {
 		echo -n "%{%k%}"
 	fi
 	echo -n "%{%f%}"
-	CURRENT_BG=''
+	CURRENT_BG='NONE'
 }
 
 # End the right-prompt
-r_prompt_end() {
-	echo -n " %{%k%f%}"
-	R_CURRENT_BG='NONE'
-}
+#r_prompt_end() { echo -n " %{%k%f%}"; R_CURRENT_BG='NONE'; }
 
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
-# RIGHT: Hostname
-r_prompt_hostname() {
+# LEFT: Hostname
+prompt_hostname() {
 	if [[ -n "${ZSH_PROMPT_TITLE}" ]]; then
-		r_prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "${ZSH_PROMPT_TITLE}"
+		prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "${ZSH_PROMPT_TITLE}"
 	fi
 }
 
-# RIGHT: Time
-r_prompt_time() {
-	#r_prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "%T"
-	r_prompt_segment $ZSH_PROMPT_FG $ZSH_PROMPT_BG "%T"
+# LEFT: Time
+prompt_time() {
+	prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "─ %T"
 }
 
 # Context: user@hostname (who am I and where am I)
@@ -121,12 +117,12 @@ prompt_context() {
 	local user=`whoami`
 
 	if [[ "$user" != "$DEFAULT_USER" || -n "$SSH_CLIENT" ]]; then
-		prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG_USER_AND_HOST "$user@%m"
+		prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG_USER_AND_HOST "${user}@%m"
 	fi
 }
 
 # Git: branch/detached head, dirty status
-r_prompt_git() {
+prompt_git() {
 	if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then
 		local ref dirty
 		if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
@@ -134,9 +130,9 @@ r_prompt_git() {
 			dirty=$(parse_git_dirty)
 			ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
 			if [[ -n $dirty ]]; then
-				r_prompt_segment $ZSH_PROMPT_BG_GIT_DIRTY $ZSH_PROMPT_BG
+				prompt_segment $ZSH_PROMPT_BG_GIT_DIRTY $ZSH_PROMPT_BG
 			else
-				r_prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_BG
+				prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_BG
 			fi
 
 			setopt promptsubst
@@ -176,20 +172,20 @@ prompt_status() {
 }
 
 ## Main prompts
-build_r_prompt() {
-	r_prompt_git
-	r_prompt_hostname
-	r_prompt_time
-	r_prompt_end
-}
+#build_r_prompt() { r_prompt_end; }
 
 build_prompt() {
 	RETVAL=$?
-	prompt_status
+	prompt_hostname
+	prompt_time
+	prompt_end
+	echo
 	prompt_context
 	prompt_dir
+	prompt_git
+	prompt_status
 	prompt_end
 }
 
-RPROMPT='$(build_r_prompt)'
+#RPROMPT='$(build_r_prompt)'
 PROMPT='%{%f%b%k%}$(build_prompt) '

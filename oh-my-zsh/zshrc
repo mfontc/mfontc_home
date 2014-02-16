@@ -22,7 +22,7 @@ ZSH_THEME="my_agnoster"
 # DISABLE_LS_COLORS="true"
 
 # Uncomment following line if you want to disable autosetting terminal title.
-# DISABLE_AUTO_TITLE="true"
+DISABLE_AUTO_TITLE="true"
 
 # Uncomment following line if you want to disable command autocorrection
 # DISABLE_CORRECTION="true"
@@ -41,15 +41,6 @@ else
 fi
 
 source $ZSH/oh-my-zsh.sh
-
-
-
-# -----------------------------------------------------------------------------
-# mfontc's ZSH configuration
-
-# RC files
-[ -s $HOME_MFONTC/vimrc ]    && alias    vim="vim    -u $HOME_MFONTC/vimrc"
-[ -s $HOME_MFONTC/screenrc ] && alias screen="screen -c $HOME_MFONTC/screenrc"
 
 
 
