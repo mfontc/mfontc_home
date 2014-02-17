@@ -20,32 +20,21 @@ R_CURRENT_BG='NONE'
 
 case none"$LANG$LC_ALL$LC_CTYPE" in
 	(*utf8*|*UTF-8*)
-		# SEGMENT_SEPARATOR='▶' ; R_SEGMENT_SEPARATOR=''
-		SEGMENT_SEPARATOR='\ue0b0'
-		#SEGMENT_SEPARATOR_2='\ue0b1'
-		R_SEGMENT_SEPARATOR='\ue0b2'
-		#R_SEGMENT_SEPARATOR_2='\ue0b3'
+		SEGMENT_SEPARATOR='\ue0b0'		# '\ue0b0'='▶'
+		#R_SEGMENT_SEPARATOR='\ue0b2'	# '\ue0b2'=''
 
-		# GIT_BRANCH='' ; GIT_STAGED=' ∋ ' ; GIT_UNSTAGED=' ∌ '
-		GIT_BRANCH='\ue0a0'
-		GIT_STAGED='\u220B '
-		GIT_UNSTAGED='\u220C '
-		GIT_DIRTY='±'
+		GIT_BRANCH=''					# '\ue0a0'=''
+		#GIT_STAGED='\u220b'			# '\u220b'='∋'
+		#GIT_UNSTAGED='\u220c'			# '\u220c'='∌'
 
-		# PROMPT_ERROR='❌' ; PROMPT_ROOT='⚡' ; PROMPT_BG_JOBS='⌛'
-		PROMPT_ERROR='\u274C '
-		PROMPT_ROOT='\u26A1 '
-		PROMPT_BG_JOBS='\u231B '
+		PROMPT_ERROR='\u2717'			# '\u2717'='✗'		'\u274c'='❌'
+		PROMPT_ROOT='\u26a1'			# '\u26a1'='⚡'
+		PROMPT_BG_JOBS='\u231a'			# '\u231a'='⌚'		'\u231b'='⌛'
 		;;
 	(*)
 		SEGMENT_SEPARATOR=''
-		#SEGMENT_SEPARATOR_2='|'
-		R_SEGMENT_SEPARATOR=''
-		#R_SEGMENT_SEPARATOR_2='|'
-		GIT_BRANCH='[CVS]'
-		GIT_STAGED='+ '
-		GIT_UNSTAGED='! '
-		GIT_DIRTY='±'
+		#R_SEGMENT_SEPARATOR=''
+		GIT_BRANCH=''
 		PROMPT_ERROR='! '
 		PROMPT_ROOT='# '
 		PROMPT_BG_JOBS='(bg) '
@@ -77,7 +66,7 @@ prompt_segment() {
 #	if [[ $1 != $R_CURRENT_BG ]]; then
 #		echo -n " %{%F{$1}%K{$R_CURRENT_BG}%}$R_SEGMENT_SEPARATOR%{$bg%}%{$fg%} "
 #	else
-#		echo -n " %{$bg%}%{$fg%}$R_SEGMENT_SEPARATOR_2 "
+#		echo -n " %{$bg%}%{$fg%} "
 #	fi
 #	R_CURRENT_BG=$1
 #	[[ -n $3 ]] && echo -n $3
@@ -126,7 +115,6 @@ prompt_git() {
 	if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then
 		local ref dirty
 		if $(git rev-parse --is-inside-work-tree >/dev/null 2>&1); then
-			ZSH_THEME_GIT_PROMPT_DIRTY="$GIT_DIRTY"
 			dirty=$(parse_git_dirty)
 			ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git show-ref --head -s --abbrev |head -n1 2> /dev/null)"
 			if [[ -n $dirty ]]; then
@@ -141,13 +129,12 @@ prompt_git() {
 			zstyle ':vcs_info:*' enable git
 			zstyle ':vcs_info:*' get-revision true
 			zstyle ':vcs_info:*' check-for-changes true
-			zstyle ':vcs_info:*' stagedstr "$GIT_STAGED"
-			zstyle ':vcs_info:git:*' unstagedstr "$GIT_UNSTAGED"
+			#zstyle ':vcs_info:*' stagedstr "$GIT_STAGED"
+			#zstyle ':vcs_info:git:*' unstagedstr "$GIT_UNSTAGED"
 			zstyle ':vcs_info:*' formats ' %u%c'
 			zstyle ':vcs_info:*' actionformats '%u%c'
 			vcs_info
-			echo -n "${ref/refs\/heads\//$GIT_BRANCH }${vcs_info_msg_0_}"
-			#echo -n "${ref/refs\/heads\//$GIT_BRANCH }$dirty"
+			echo -n "${ref/refs\/heads\//$GIT_BRANCH}${vcs_info_msg_0_}"
 		fi
 	fi
 }
@@ -173,6 +160,7 @@ prompt_status() {
 
 ## Main prompts
 #build_r_prompt() { r_prompt_end; }
+#RPROMPT='$(build_r_prompt)'
 
 build_prompt() {
 	RETVAL=$?
@@ -180,12 +168,11 @@ build_prompt() {
 	prompt_time
 	prompt_end
 	echo
-	prompt_status
 	prompt_context
+	prompt_status
 	prompt_dir
 	prompt_git
 	prompt_end
 }
 
-#RPROMPT='$(build_r_prompt)'
 PROMPT='%{%f%b%k%}$(build_prompt) '

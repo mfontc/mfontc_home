@@ -1,10 +1,10 @@
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+
 # -----------------------------------------------------------------------------
 # ZSH configuration
-
 ZSH=$HOME/.oh-my-zsh
 HOME_MFONTC=$HOME/.mfontc_home
 ZSH_MFONTC=$HOME_MFONTC/oh-my-zsh
-
 
 # Theme
 ZSH_THEME="my_agnoster"
@@ -42,21 +42,15 @@ fi
 
 source $ZSH/oh-my-zsh.sh
 
-
-
 # -----------------------------------------------------------------------------
 # History configuration
-
 HISTSIZE=10000
 SAVEHIST=10000
 [ "$ZSH_MFONTC" ] && HISTFILE=$ZSH_MFONTC/.zsh_history || ~/.zsh_history
 HIST_STAMPS="yyyy-mm-dd"
 
-
-
 # -----------------------------------------------------------------------------
 # Bindkeys: To see the key combo you want to use just do "cat > /dev/null" and press it
-
 bindkey "^K"      kill-whole-line                      # ctrl-k
 bindkey "^R"      history-incremental-search-backward  # ctrl-r
 bindkey "^A"      beginning-of-line                    # ctrl-a
@@ -68,14 +62,9 @@ bindkey "^F"      forward-char                         # ctrl-f
 bindkey "^B"      backward-char                        # ctrl-b
 bindkey -e        # Default to standard emacs bindings, regardless of editor string
 
-
-
 # -----------------------------------------------------------------------------
 # PATHS
-
 export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
-
-
 
 # # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
