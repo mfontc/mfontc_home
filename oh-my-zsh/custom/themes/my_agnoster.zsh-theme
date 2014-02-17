@@ -132,7 +132,7 @@ prompt_git() {
 			if [[ -n $dirty ]]; then
 				prompt_segment $ZSH_PROMPT_BG_GIT_DIRTY $ZSH_PROMPT_BG
 			else
-				prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_BG
+				prompt_segment $ZSH_PROMPT_BG_GIT_CLEAN $ZSH_PROMPT_FG
 			fi
 
 			setopt promptsubst
