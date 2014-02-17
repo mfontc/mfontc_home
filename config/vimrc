@@ -80,8 +80,8 @@ if v:version >= 703
 	autocmd InsertLeave * highlight StatusLine   ctermbg=0 ctermfg=7 gui=bold
 
 	" In many terminal emulators the mouse works just fine, thus enable it.
-	if has('mouse')
-		set mouse=a
-	endif
+	"if has('mouse')
+	"	set mouse=a
+	"endif
 endif
 
