@@ -66,6 +66,12 @@ bindkey -e        # Default to standard emacs bindings, regardless of editor str
 # PATHS
 export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
 
+# -----------------------------------------------------------------------------
+# FUNCTIONS PATH and AUTOLOADING
+fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" )
+autoload -Uz mfontcEchoes
+mfontcEchoes
+
 # # Preferred editor for local and remote sessions
 # if [[ -n $SSH_CONNECTION ]]; then
 #   export EDITOR='vim'
