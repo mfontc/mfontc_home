@@ -1,9 +1,7 @@
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 #
-# agnoster's Theme - https://gist.github.com/3712874
-#
+# Based on agnoster's Theme - https://gist.github.com/3712874
 # In order for this theme to render correctly, you will need a [Powerline-patched font](https://gist.github.com/1595572).
-# In addition, I recommend the [Solarized theme](https://github.com/altercation/solarized/).
 #
 
 ### Default colors by hostname
@@ -16,30 +14,24 @@ ZSH_PROMPT_BG_GIT_CLEAN="$ZSH_PROMPT_BG"
 ZSH_PROMPT_BG_GIT_DIRTY="$ZSH_PROMPT_FG0"
 
 CURRENT_BG='NONE'
-R_CURRENT_BG='NONE'
 
-case none"$LANG$LC_ALL$LC_CTYPE" in
-	(*utf8*|*UTF-8*)
-		SEGMENT_SEPARATOR='\ue0b0'		# '\ue0b0'='▶'
-		#R_SEGMENT_SEPARATOR='\ue0b2'	# '\ue0b2'=''
+# Beautify prompt :-)
+SEGMENT_SEPARATOR='\ue0b0'	# '\ue0b0'='▶'
+GIT_BRANCH=''				# '\ue0a0'=''
+#GIT_STAGED='\u220b'		# '\u220b'='∋'
+#GIT_UNSTAGED='\u220c'		# '\u220c'='∌'
+PROMPT_ERROR='\u2717'		# '\u2717'='✗'	'\u274c'='❌'
+PROMPT_ROOT='\u26a1'		# '\u26a1'='⚡'
+PROMPT_BG_JOBS='\u231a'		# '\u231a'='⌚'	'\u231b'='⌛'
 
-		GIT_BRANCH=''					# '\ue0a0'=''
-		#GIT_STAGED='\u220b'			# '\u220b'='∋'
-		#GIT_UNSTAGED='\u220c'			# '\u220c'='∌'
-
-		PROMPT_ERROR='\u2717'			# '\u2717'='✗'		'\u274c'='❌'
-		PROMPT_ROOT='\u26a1'			# '\u26a1'='⚡'
-		PROMPT_BG_JOBS='\u231a'			# '\u231a'='⌚'		'\u231b'='⌛'
-		;;
-	(*)
-		SEGMENT_SEPARATOR=''
-		#R_SEGMENT_SEPARATOR=''
-		GIT_BRANCH=''
-		PROMPT_ERROR='! '
-		PROMPT_ROOT='# '
-		PROMPT_BG_JOBS='(bg) '
-		;;
-esac
+# Unbeautify prompt on tty
+tty | grep -q '^/dev/tty' && {
+	SEGMENT_SEPARATOR=''
+	GIT_BRANCH=''
+	PROMPT_ERROR='! '
+	PROMPT_ROOT='# '
+	PROMPT_BG_JOBS='(bg) '
+}
 
 ### Segment drawing
 # A few utility functions to make it easy and re-usable to draw segmented prompts
@@ -58,20 +50,6 @@ prompt_segment() {
 	[[ -n $3 ]] && echo -n $3
 }
 
-# Begin a right-segment
-#r_prompt_segment() {
-#	local bg fg
-#	[[ -n $1 ]] && bg="%K{$1}" || bg="%k"
-#	[[ -n $2 ]] && fg="%F{$2}" || fg="%f"
-#	if [[ $1 != $R_CURRENT_BG ]]; then
-#		echo -n " %{%F{$1}%K{$R_CURRENT_BG}%}$R_SEGMENT_SEPARATOR%{$bg%}%{$fg%} "
-#	else
-#		echo -n " %{$bg%}%{$fg%} "
-#	fi
-#	R_CURRENT_BG=$1
-#	[[ -n $3 ]] && echo -n $3
-#}
-
 # End the prompt, closing any open segments
 prompt_end() {
 	if [[ -n $CURRENT_BG ]]; then
@@ -83,20 +61,17 @@ prompt_end() {
 	CURRENT_BG='NONE'
 }
 
-# End the right-prompt
-#r_prompt_end() { echo -n " %{%k%f%}"; R_CURRENT_BG='NONE'; }
-
 ### Prompt components
 # Each component will draw itself, and hide itself if no information needs to be shown
 
-# LEFT: Hostname
+# Hostname
 prompt_hostname() {
 	if [[ -n "${ZSH_PROMPT_TITLE}" ]]; then
 		prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "${ZSH_PROMPT_TITLE}"
 	fi
 }
 
-# LEFT: Time
+# Time
 prompt_time() {
 	prompt_segment $ZSH_PROMPT_BG $ZSH_PROMPT_FG "─ %T"
 }
@@ -159,9 +134,6 @@ prompt_status() {
 }
 
 ## Main prompts
-#build_r_prompt() { r_prompt_end; }
-#RPROMPT='$(build_r_prompt)'
-
 build_prompt() {
 	RETVAL=$?
 	prompt_hostname

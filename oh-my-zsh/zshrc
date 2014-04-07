@@ -7,7 +7,7 @@ HOME_MFONTC=$HOME/.mfontc_home
 ZSH_MFONTC=$HOME_MFONTC/oh-my-zsh
 
 # Theme
-ZSH_THEME="my_agnoster"
+ZSH_THEME="mfontc"
 
 # Set to this to use case-sensitive completion
 #CASE_SENSITIVE="true"
@@ -31,7 +31,7 @@ DISABLE_AUTO_TITLE="true"
 # COMPLETION_WAITING_DOTS="true"
 
 # Uncomment following line if you want to disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
+DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # Plugins
 if (( $UID == 0 )); then
@@ -51,15 +51,9 @@ HIST_STAMPS="yyyy-mm-dd"
 
 # -----------------------------------------------------------------------------
 # Bindkeys: To see the key combo you want to use just do "cat > /dev/null" and press it
-bindkey "^K"      kill-whole-line                      # ctrl-k
 bindkey "^R"      history-incremental-search-backward  # ctrl-r
-bindkey "^A"      beginning-of-line                    # ctrl-a
-bindkey "^E"      end-of-line                          # ctrl-e
 bindkey "[B"      history-search-forward               # down arrow
 bindkey "[A"      history-search-backward              # up arrow
-bindkey "^D"      delete-char                          # ctrl-d
-bindkey "^F"      forward-char                         # ctrl-f
-bindkey "^B"      backward-char                        # ctrl-b
 bindkey -e        # Default to standard emacs bindings, regardless of editor string
 
 # -----------------------------------------------------------------------------
@@ -72,17 +66,12 @@ fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" )
 autoload -Uz mfontcEchoes
 mfontcEchoes
 
-# # Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='mvim'
-# fi
+# -----------------------------------------------------------------------------
+# SSH HOSTS from ~/.ssh/config
+[ -f ~/.ssh/config ] && : ${(A)ssh_config_hosts:=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+zstyle ':completion:*:*:*' hosts $ssh_config_hosts $ssh
 
-# ssh
-# export SSH_KEY_PATH="~/.ssh/dsa_id"
-
+# -----------------------------------------------------------------------------
 #DEFAULT_USER=$USER
+

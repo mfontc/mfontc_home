@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 
 fast_chr() {
 	local __octal

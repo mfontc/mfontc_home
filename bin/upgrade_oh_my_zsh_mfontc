@@ -1,0 +1,38 @@
+#!/bin/zsh
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+
+cd $HOME/.mfontc_home/
+
+# GIT PULL!!!
+git pull origin master
+
+# ~/.zshrc
+zshrc=~/.zshrc
+zshrc_target=$(readlink -f "${zshrc}")
+zshrc_wanted="$HOME/.mfontc_home/oh-my-zsh/zshrc"
+
+if [[ "${zshrc_target}" != "${zshrc_wanted}" ]]; then
+	rm -f "${zshrc}"
+	ln -s "${zshrc_wanted}" "${zshrc}"
+fi
+
+# ZSH CUSTOM THEMES
+zsh_custom_themes="$HOME/.oh-my-zsh/custom/themes"
+zsh_custom_themes_target=$(readlink -f "${zsh_custom_themes}")
+zsh_custom_themes_wanted="$HOME/.mfontc_home/oh-my-zsh/custom/themes"
+if [[ "${zsh_custom_themes_target}" != "${zsh_custom_themes_wanted}" ]]; then
+	rm -f "${zsh_custom_themes}"
+	ln -s "${zsh_custom_themes_wanted}" "${zsh_custom_themes}"
+fi
+
+# ZSH CUSTOM PLUGINS «mfontc»
+mfontc_plugin="$HOME/.oh-my-zsh/custom/plugins/mfontc"
+mfontc_plugin_target=$(readlink -f "${mfontc_plugin}")
+mfontc_plugin_wanted="$HOME/.mfontc_home/oh-my-zsh/custom/plugins/mfontc"
+if [[ "${mfontc_plugin_target}" != "${mfontc_plugin_wanted}" ]]; then
+	rm -f "${mfontc_plugin}"
+	ln -s "${mfontc_plugin_wanted}" "${mfontc_plugin}"
+fi
+
+
+

@@ -1,2 +1,4 @@
 #!/bin/sh
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+
 exec chmod u+x "$@"

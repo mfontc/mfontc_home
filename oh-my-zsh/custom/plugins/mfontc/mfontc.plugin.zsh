@@ -1,6 +1,6 @@
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 #
-# Manuel Font Colonques - 2014-02-19
+# Manuel Font Colonques - 2014-04-07
 #
 
 # ------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ export ZSH_PROMPT_FG="$(  [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMP
 export ZSH_PROMPT_FG0="$( [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f3 -d';' )"
 
 # Changes the git prompt visualization
-my_prompt_git() { if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then export ZSH_PROMPT_GIT="no"; else export ZSH_PROMPT_GIT="yes"; fi; }
+mf.prompt.git() { if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then export ZSH_PROMPT_GIT="no"; else export ZSH_PROMPT_GIT="yes"; fi; }
 
 # Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
