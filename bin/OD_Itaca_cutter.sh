@@ -77,10 +77,10 @@ for tag in \
     aulas \
     categorias \
     compensatorias \
-    contenidos_alumno \
     contenidos \
-    cursos_grupo \
+    contenidos_alumno \
     cursos \
+    cursos_grupo \
     denominaciones \
     docentes \
     empresas_proveedoras \
@@ -94,20 +94,16 @@ for tag in \
     justificaciones \
     lenguajes_vehiculares \
     lineas \
-    localidades \
     medidas_educativas \
     medidas_neses \
     modalidades_asistencia \
     motivos_sustitucion \
-    municipios \
     neses \
     no_docentes \
     ocupaciones \
     organismos \
-    paises \
     parentescos \
     plantillas_horario \
-    provincias \
     recursos_neses \
     recursos_personales \
     sesiones_horario \
@@ -120,7 +116,11 @@ for tag in \
     tipos_no_docente \
     tipos_nota \
     tipos_vias \
-    turnos
+    turnos \
+    localidades \
+    municipios \
+    provincias \
+    paises
 do
     touch_tag_from_xml_file "${tag}"
 done

@@ -58,7 +58,7 @@ bindkey -e        # Default to standard emacs bindings, regardless of editor str
 
 # -----------------------------------------------------------------------------
 # PATHS
-export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:$HOME/.composer/vendor/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
 
 # -----------------------------------------------------------------------------
 # FUNCTIONS PATH and AUTOLOADING
