@@ -27,19 +27,19 @@ fi
 
 # Extract file by using extension as reference
 case "$@" in
-	*.7z ) 7z x "$@" ;;
-	*.tar.bz2 ) tar xvjf "$@" ;;
-	*.bz2 ) bunzip2 "$@" ;;
-	*.deb ) ar vx "$@" ;;
-	*.tar.gz ) tar xvf "$@" ;;
-	*.gz ) gunzip "$@" ;;
-	*.tar ) tar xvf "$@" ;;
-	*.tbz2 ) tar xvjf "$@" ;;
-	*.tar.xz ) tar xvf "$@" ;;
-	*.tgz ) tar xvzf "$@" ;;
-	*.rar ) unrar x "$@" ;;
-	*.zip ) unzip "$@" ;;
-	*.Z ) uncompress "$@" ;;
+	*.7z )      7z      x    "$@" ;;
+	*.tar.bz2 ) tar     xvjf "$@" ;;
+	*.bz2 )     bunzip2      "$@" ;;
+	*.deb )     ar      vx   "$@" ;;
+	*.tar.gz )  tar     xvf  "$@" ;;
+	*.gz )      gunzip       "$@" ;;
+	*.tar )     tar     xvf  "$@" ;;
+	*.tbz2 )    tar     xvjf "$@" ;;
+	*.tar.xz )  tar     xvf  "$@" ;;
+	*.tgz )     tar     xvzf "$@" ;;
+	*.rar )     unrar   x    "$@" ;;
+	*.zip )     unzip        "$@" ;;
+	*.Z )       uncompress   "$@" ;;
 	* ) echo " Unsupported file format" ;;
 esac
 

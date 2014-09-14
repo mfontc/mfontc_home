@@ -1,0 +1,63 @@
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+
+fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" ) && autoload -Uz mfontc-echoes && mfontc-echoes
+
+# ------------------------------------------------------------------------------
+function __mfontc_pkg_install_aptitude() {
+	echo_ "\nUpdating packets list..."; sudo apt-get update           || return 1
+	echo_ "\nInstalling aptitude...";   sudo apt-get install aptitude || return 1
+}
+
+function __mfontc_pkg_install_deborphan() {
+	echo_ "\nUpdating packets list..."; sudo apt-get update            || return 1
+	echo_ "\nInstalling deborphan...";  sudo apt-get install deborphan || return 1
+}
+
+# ------------------------------------------------------------------------------
+mfontc-pkg-upgrade() {
+	which aptitude &> /dev/null && {
+		echo_ "\nUpdating packets list..."; sudo aptitude update       || return 1
+		echo_ "\nUpgrading system...";      sudo aptitude dist-upgrade || return 1
+		echo_ "\nCleaning cache data...";   sudo aptitude clean        || return 1
+	} || {
+		__mfontc_pkg_install_aptitude && $0 || return 1
+	}
+}
+
+mfontc-pkg-upgrade-force() {
+	echo_ "\nUpdating packets list..."; sudo apt-get update           || return 1
+	echo_ "\nUpgrading system...";      sudo apt-get dist-upgrade -yf || return 1
+	echo_ "\nChecking system...";       sudo apt-get check            || return 1
+	echo_ "\nCleaning cache...";        sudo apt-get clean            || return 1
+}
+
+mfontc-pkg-clear() {
+	echo_ "\nCleaning configuration files of deleted packages..."
+	dpkg -l | grep ^rc && sudo dpkg -P $( dpkg -l | grep ^rc | awk '{print $2}' ) || echo "Everything is clean..."
+}
+
+mfontc-pkg-show-downloadables() {
+	apt-get -qq --print-uris dist-upgrade 2> /dev/null | awk '{ printf "%9.2f %s\n", $3/1024, $1 }' | sort -rn
+}
+
+mfontc-pkg-deborphan() {
+	which deborphan &> /dev/null && {
+		while [ -n "`deborphan`" ]; do
+			deborphan; echo; sudo aptitude purge `deborphan` || return 1
+		done
+	} || {
+		__mfontc_pkg_install_deborphan && $0 || return 1
+	}
+}
+
+mfontc-pkg-deborphan-show() {
+	which deborphan &> /dev/null && {
+		deborphan --all-packages --no-show-section --show-priority --show-size | sort -n
+	} || {
+		__mfontc_pkg_install_deborphan && $0 || return 1
+	}
+}
+
+# ------------------------------------------------------------------------------
+mfontc-pkg-upgrade && mfontc-pkg-clear
+

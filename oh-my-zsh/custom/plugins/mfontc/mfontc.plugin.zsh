@@ -1,7 +1,4 @@
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
-#
-# Manuel Font Colonques - 2014-04-07
-#
 
 # ------------------------------------------------------------------------------
 # Hostname Titles
@@ -18,9 +15,6 @@ local ZSH_PROMPT_DEFAULT_COLORS="${ZSH_MFONTC}/.zsh_default_colors"
 export ZSH_PROMPT_BG="$(  [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f1 -d';' )"
 export ZSH_PROMPT_FG="$(  [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f2 -d';' )"
 export ZSH_PROMPT_FG0="$( [ -f "$ZSH_PROMPT_DEFAULT_COLORS" ] && cat "$ZSH_PROMPT_DEFAULT_COLORS" | cut -f3 -d';' )"
-
-# Changes the git prompt visualization
-mf.prompt.git() { if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then export ZSH_PROMPT_GIT="no"; else export ZSH_PROMPT_GIT="yes"; fi; }
 
 # Make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
@@ -70,28 +64,6 @@ alias -g P="2>&1| pygmentize -l pytb"
 
 alias unexport='unset'
 
-# More aliases...
-alias        vim="vim    -u $HOME_MFONTC/config/vimrc -p"
-alias     screen="screen -c $HOME_MFONTC/config/screenrc -U -D -RR"
-alias my_netstat='sudo netstat -patuW'
-alias      my_ps='ps -U $USER -u $USER uf'
-alias  my_ps_all='ps auxfww'
-alias my_ps_time='ps -eo "lstart,cmd"'
-alias    my_tree='tree -a -N -A -C -h --noreport --dirsfirst'
-alias      my_du='du | grep ".*\./[^/]*$\|.*\.$" | sort -n'
-alias      my_df='df -Th'
-
-alias    search_into_files="find . -type f -print0 | xargs -0 -n 100 grep --color --ignore-case -n "
-alias        my_show_paths='echo -e ${PATH//:/\\n}'
-alias my_benchmark_in_bash='echo "2^2^20" | time -p bc > /dev/null'
-alias                xurro="dd if=/dev/urandom bs=512 count=1 2> /dev/null | tr -dc '[:print:]'; echo"
-
-which trickle &> /dev/null && {
-	alias bandwith_100_KB_s='trickle -s -d 100 -u 10'
-	alias bandwith_250_KB_s='trickle -s -d 250 -u 25'
-	alias bandwith_500_KB_s='trickle -s -d 500 -u 50'
-}
-
 # ------------------------------------------------------------------------------
 # Aliases 2
 
@@ -129,89 +101,24 @@ fi
 # Make zsh know about hosts already accessed by SSH
 zstyle -e ':completion:*:(ssh|scp|sshfssftp|rsh|rsync):hosts' hosts 'reply=(${=${${(f)"$(cat {/etc/ssh_,~/.ssh/known_}hosts(|2)(N) /dev/null)"}%%[# ]*}//,/ })'
 
-
-
 # ------------------------------------------------------------------------------
-# FUNCTIONS: Package Management
-
-PKG_upgrade() {
-	which aptitude &> /dev/null && {
-		echo_ "#\n# Updating packets list...\n#"; sudo aptitude update       || return 1
-		echo_ "#\n# Upgrading system...\n#";      sudo aptitude dist-upgrade || return 1
-		echo_ "#\n# Cleaning cache data...\n#";   sudo aptitude clean        || return 1
-	} || {
-		sudo apt-get install aptitude && PKG_upgrade || return 1
-	}
-}
-
-PKG_upgrade_safe() {
-	which aptitude &> /dev/null && {
-		echo_ "#\n# Updating packets list...\n#"; sudo aptitude update       || return 1
-		echo_ "#\n# SAFE upgrading system...\n#"; sudo aptitude safe-upgrade || return 1
-		echo_ "#\n# Cleaning cache data...\n#";   sudo aptitude clean        || return 1
-	} || {
-		sudo apt-get install aptitude && PKG_upgrade_safe || return 1
-	}
-}
-
-PKG_upgrade_FORCE_YES() {
-	echo_ "#\n# Updating packets list...\n#"; sudo apt-get update           || return 1
-	echo_ "#\n# Upgrading system...\n#";      sudo apt-get dist-upgrade -yf || return 1
-	echo_ "#\n# Checking system...\n#";       sudo apt-get check            || return 1
-	echo_ "#\n# Cleaning cache...\n#";        sudo apt-get clean            || return 1
-}
-
-PKG_clear_old_config_files() {
-	echo_ "#\n# Cleaning configuration files of deleted packages...\n#"
-	dpkg -l | grep ^rc && sudo dpkg -P $( dpkg -l | grep ^rc | awk '{print $2}' ) || echo "Everything is clean..."
-}
-
-PKG_show_downloadables() {
-	apt-get -qq --print-uris dist-upgrade 2> /dev/null | awk '{ printf "%9.2f %s\n", $3/1024, $1 }' | sort -rn
-}
-
-PKG_global_info() {
-	which aptitude &> /dev/null && {
-		echo_ "#\n# System package information...\n#"
-		echo -n "dpkg-selections:      "; dpkg --get-selections   | wc -l
-		echo -n "apt-installed:        "; aptitude search '~i'    | wc -l
-		echo -n "apt-installed-manual: "; aptitude search '~i!~M' | wc -l
-		echo -n "apt-installed-auto:   "; aptitude search '~i ~M' | wc -l
-	} || {
-		sudo apt-get install aptitude && PKG_global_info || return 1
-	}
-}
-
-PKG_search_for_file() {
-	which apt-file &> /dev/null && {
-		file="$*"
-		echo_ "\n>>> Searching for file «${file}»"
-		sudo apt-file search ${file}
-	} || {
-		echo -n -e "\n >>> The programm 'apt-file' is not installed. Do you want to install it? "
-		yes_or_no_ && \
-			sudo apt-get install apt-file && \
-			sudo apt-file update && \
-			PKG_search_for_file ${file}
-	}
-}
-
-my_deborphan-recursive() {
-	which deborphan &> /dev/null || {
-		sudo apt-get install deborphan || return 1
-	}
-
-	while [ -n "`deborphan`" ]; do
-		deborphan; echo
-		sudo aptitude purge `deborphan` || return 1
-	done
-}
-
-my_deborphan-show-all-by-size() {
-	which deborphan &> /dev/null || {
-		sudo apt-get install deborphan || return 1
-	}
-
-	deborphan --all-packages --no-show-section --show-priority --show-size | sort -n
-}
+alias    vim="vim -u $HOME_MFONTC/config/vimrc -p"
+alias    screen="screen -c $HOME_MFONTC/config/screenrc -U -D -RR"
+function pbcopy()   { xclip -selection clipboard; }
+function pbpaste()  { xclip -selection clipboard -o; }
+function copydir()  { pwd | tr -d "\r\n" | pbcopy; }
+function copyfile() { [[ "$#" != 1 ]] && return 1; local file_to_copy=$1; cat $file_to_copy | pbcopy; }
+function search-into-files() { find . -type f -print0 | xargs -0 -n 100 grep --color --ignore-case -n "$*"; }
+function _mfontc-git-prompt() { if [[ "$ZSH_PROMPT_GIT" == "yes" ]]; then export ZSH_PROMPT_GIT="no"; else export ZSH_PROMPT_GIT="yes"; fi; }
+function _mfontc-show-paths() { echo -e ${PATH//:/\\n}; }
+function _mfontc-du()         { du | grep ".*\./[^/]*$\|.*\.$" | sort -n; }
+function _mfontc-df()         { df -Th; }
+function _mfontc-tree()       { tree -a -N -A -C -h --noreport --dirsfirst; }
+function _mfontc-ps()         { ps -U $USER -u $USER uf; }
+function _mfontc-ps-all()     { ps auxfww; }
+function _mfontc-ps-time()    { ps -eo "lstart,cmd"; }
+function _mfontc-netstat()    { sudo netstat -patuW; }
+function _mfontc-xurro()      { dd if=/dev/urandom bs=512 count=1 2> /dev/null | tr -dc '[:print:]'; echo; }
+function _mfontc-calculator() { echo "$*" | bc -l; }
+function _mfontc-benchmark()  { local t0=$(date +%s.%N); echo "2^2^20" | bc > /dev/null; local t1=$(date +%s.%N); local secs=$(echo "$t1 - $t0" | bc); echo "Calculate 2^2^20 in $secs secs"; }
 

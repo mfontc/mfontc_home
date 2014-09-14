@@ -1,9 +1,7 @@
 #!/bin/zsh
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 
-fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" )
-autoload -Uz mfontcEchoes
-mfontcEchoes
+fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" ) && autoload -Uz mfontc-echoes && mfontc-echoes
 
 #
 #

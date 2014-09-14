@@ -1,7 +1,6 @@
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 
-autoload colors
-colors
+autoload colors && colors
 
 for COLOR in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE; do
 	eval $COLOR='$fg_no_bold[${(L)COLOR}]'
@@ -9,19 +8,19 @@ for COLOR in RED GREEN YELLOW BLUE MAGENTA CYAN BLACK WHITE; do
 done
 eval RESET='$reset_color'
 
-echo_ () {
+function echo_() {
 	print -P -- "${BOLD_GREEN}$*${RESET}"
 }
 
-echoE () {
+function echoE() {
 	print -P -- "${BOLD_RED}$*${RESET}" > /dev/stderr
 }
 
-echoQ () {
+function echoQ() {
 	printf -- "${BOLD_YELLOW}$*${RESET}"
 }
 
-take_a_breath_and_continue () {
+function take_a_breath_and_continue() {
 	for i in $(seq 1 3); do
 		echoQ "."
 		sleep 0.1
@@ -29,7 +28,7 @@ take_a_breath_and_continue () {
 	echo -e "\n\n\n"
 }
 
-take_a_breath_or_exit () {
+function take_a_breath_or_exit() {
 	echoQ "[ Press a key to continue; 'q' breaks the execution ] "
 	read -k1 opt
 	case "$opt" in
@@ -38,7 +37,7 @@ take_a_breath_or_exit () {
 	esac
 }
 
-si_o_no () {
+function si_o_no() {
 	echoQ "$* [S/n] "
 	read -k1 opt
 	case "$opt" in
@@ -47,7 +46,7 @@ si_o_no () {
 	esac
 }
 
-yes_or_no () {
+function yes_or_no() {
 	echoQ "$* [Y/n] "
 	read -k1 opt
 	case "$opt" in
@@ -56,7 +55,7 @@ yes_or_no () {
 	esac
 }
 
-got_root () {
+function got_root() {
 	if [[ "$USER" == "root" ]]; then
 		return 0
 	else
@@ -65,7 +64,7 @@ got_root () {
 	fi
 }
 
-got_utf8 () {
+function got_utf8() {
 	case none"$LANG$LC_ALL$LC_CTYPE" in
 		*UTF-8*) return 0 ;;
 		*)       echoE "This script must be run in a UTF-8 locale" return 1 ;;
@@ -76,12 +75,3 @@ _date="$(      date +%Y-%m-%d )"
 _date_time="$( date +%Y-%m-%d_%H:%M:%S )"
 _datetime="$(  date +%Y%m%d-%H%M%S )"
 
-### De lo siguiente, no estoy seguro
-
-# Now you should redefine the "mfontcEchoes" function (which currently contains all the code from the file) to something that covers its actual functionality.
-# After that, all the helper functions along with the core function will be defined and visible in global scope.
-#mfontcEchoes () { printf '%s %s %s' "$(echo_)" "$(echoE)" "$(echoQ)" > /dev/null ; }
-
-# Finally run the redefined function with the same arguments as the current run. If this is left out, the functionality implemented by the newly defined
-# "mfontcEchoes" function is not executed upon its first call. So:
-#mfontcEchoes "$@"

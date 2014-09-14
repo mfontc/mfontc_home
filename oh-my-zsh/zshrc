@@ -37,7 +37,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 if (( $UID == 0 )); then
 	plugins=(mfontc colorize colored-man command-not-found wd extract encode64)
 else
-	plugins=(mfontc colorize colored-man command-not-found wd extract encode64 git git-extras composer symfony2 )
+	plugins=(mfontc colorize colored-man command-not-found wd extract encode64 git git-extras composer symfony2)
 fi
 
 source $ZSH/oh-my-zsh.sh
@@ -63,14 +63,19 @@ export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:$HO
 # -----------------------------------------------------------------------------
 # FUNCTIONS PATH and AUTOLOADING
 fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" )
-autoload -Uz mfontcEchoes
-mfontcEchoes
+autoload -Uz mfontc-echoes && mfontc-echoes
+autoload -Uz mfontc-keys   && mfontc-keys
+autoload -Uz mfontc-pkg
+autoload -Uz mfontc-trickle
 
 # -----------------------------------------------------------------------------
 # SSH HOSTS from ~/.ssh/config
 [ -f ~/.ssh/config ] && : ${(A)ssh_config_hosts:=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
 
 zstyle ':completion:*:*:*' hosts $ssh_config_hosts $ssh
+
+# -----------------------------------------------------------------------------
+#
 
 # -----------------------------------------------------------------------------
 #DEFAULT_USER=$USER

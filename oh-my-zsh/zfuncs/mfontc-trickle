@@ -1,0 +1,37 @@
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+
+# ------------------------------------------------------------------------------
+function __mfontc_trickle_install() {
+	fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" ) && autoload -Uz mfontc-echoes && mfontc-echoes
+	echo_ "\nUpdating packets list..."; sudo apt-get update          || return 1
+	echo_ "\nInstalling trickle...";    sudo apt-get install trickle || return 1
+}
+
+# ------------------------------------------------------------------------------
+function mfontc-trickle-500-50() {
+	which trickle &> /dev/null && {
+		trickle -s -d 500 -u 50 $*
+	} || {
+		__mfontc_trickle_install && $0 $* || return 1
+	}
+}
+
+function mfontc-trickle-250-25() {
+	which trickle &> /dev/null && {
+		trickle -s -d 250 -u 25 $*
+	} || {
+		__mfontc_trickle_install && $0 $* || return 1
+	}
+}
+
+function mfontc-trickle-100-10() {
+	which trickle &> /dev/null && {
+		trickle -s -d 100 -u 10 $*
+	} || {
+		__mfontc_trickle_install && $0 $* || return 1
+	}
+}
+
+# ------------------------------------------------------------------------------
+mfontc-trickle-500-50 $*
+

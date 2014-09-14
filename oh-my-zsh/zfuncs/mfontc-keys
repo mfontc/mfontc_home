@@ -1,0 +1,53 @@
+# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+
+function mfontc-keys() {
+	eval `keychain --eval --agents ssh --timeout 60 --quick --quiet --ignore-missing id_rsa`
+}
+
+function mfontc-keys-load() {
+	eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing id_rsa id_rsa.devel id_rsa.mfontc_home`
+}
+
+function mfontc-keys-loaded() {
+	ssh-add -l
+}
+
+function mfontc-keys-clear() {
+	keychain --clear
+}
+
+function mfontc-keys-clear2() {
+	keychain --stop all
+}
+
+function mfontc-keys-help() {
+	cat <<USAGE
+Requirements:
+    - keychain:     sudo apt-get install keychain
+
+Functions available:
+    - mfontc-keys:         Load your default key onto the agent.
+    - mfontc-keys-load:    Load all your keys onto the agent.
+    - mfontc-keys-loaded:  Show the loaded keys.
+    - mfontc-keys-clear:   Unload the keys from the agent.
+    - mfontc-keys-clear2:  Unload the keys from the agent
+                           and kill currently running agent processes.
+    - mfontc-keys-help:    This message.
+
+How to disable the "GNOME Keyring SSH Agent":
+    Edit the gnome-keyring-ssh.desktop file and change the NoDisplay:
+    - sudo vim /etc/xdg/autostart/gnome-keyring-ssh.desktop
+      NoDisplay=false
+    At that point, "SSH Key Agent - GNOME Keyring: SSH Agent" appeared in the
+    Startup Applications manager, and you could uncheck it. Then, restart the
+    session.
+
+More info:
+    - https://github.com/funtoo/keychain
+    - http://www.gilluminate.com/2013/04/04/ubuntu-ssh-agent-and-you/
+
+USAGE
+}
+
+mfontc-keys
+
