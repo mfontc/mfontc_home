@@ -16,7 +16,7 @@ function mfontc-keys-load() {
 	#eval `keychain --eval --agents ssh --timeout 60 --quick --quiet --ignore-missing ~/.ssh/*_rsa`
 	#eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing ~/.ssh/*_rsa`
 	local privateKeys=$(file ~/.ssh/* | grep -i 'private' | sed 's/:.*//' | paste -s -d' ')
-	eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing $privateKeys`
+	eval `keychain --eval --agents ssh --ignore-missing $privateKeys`
 }
 
 function mfontc-keys-loaded() {
