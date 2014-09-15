@@ -1,11 +1,22 @@
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 
-function mfontc-keys() {
-	eval `keychain --eval --agents ssh --timeout 60 --quick --quiet --ignore-missing id_rsa`
+function __mfontc_keys_install_keychain() {
+	echo_ "\nUpdating packets list..."; sudo apt-get update           || return 1
+	echo_ "\nInstalling keychain...";   sudo apt-get install keychain || return 1
 }
 
+# ------------------------------------------------------------------------------
+alias K='mfontc-keys-load'
+
 function mfontc-keys-load() {
-	eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing id_rsa id_rsa.devel id_rsa.mfontc_home`
+	which keychain &> /dev/null || {
+		__mfontc_keys_install_keychain || return 1
+	}
+
+	#eval `keychain --eval --agents ssh --timeout 60 --quick --quiet --ignore-missing ~/.ssh/*_rsa`
+	#eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing ~/.ssh/*_rsa`
+	local privateKeys=$(file ~/.ssh/* | grep -i 'private' | sed 's/:.*//' | paste -s -d' ')
+	eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing $privateKeys`
 }
 
 function mfontc-keys-loaded() {
@@ -13,20 +24,28 @@ function mfontc-keys-loaded() {
 }
 
 function mfontc-keys-clear() {
+	which keychain &> /dev/null || {
+		__mfontc_keys_install_keychain || return 1
+	}
+
 	keychain --clear
 }
 
 function mfontc-keys-clear2() {
+	which keychain &> /dev/null || {
+		__mfontc_keys_install_keychain || return 1
+	}
+
 	keychain --stop all
 }
 
+# ------------------------------------------------------------------------------
 function mfontc-keys-help() {
 	cat <<USAGE
 Requirements:
     - keychain:     sudo apt-get install keychain
 
 Functions available:
-    - mfontc-keys:         Load your default key onto the agent.
     - mfontc-keys-load:    Load all your keys onto the agent.
     - mfontc-keys-loaded:  Show the loaded keys.
     - mfontc-keys-clear:   Unload the keys from the agent.
@@ -48,6 +67,4 @@ More info:
 
 USAGE
 }
-
-mfontc-keys
 
