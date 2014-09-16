@@ -1,3 +1,4 @@
+#!/bin/zsh
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 
 function __mfontc_keys_install_keychain() {
@@ -15,8 +16,9 @@ function mfontc-keys-load() {
 
 	#eval `keychain --eval --agents ssh --timeout 60 --quick --quiet --ignore-missing ~/.ssh/*_rsa`
 	#eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing ~/.ssh/*_rsa`
-	local privateKeys=$(file ~/.ssh/* | grep -i 'private' | sed 's/:.*//' | paste -s -d' ')
-	eval `keychain --eval --agents ssh --ignore-missing $privateKeys`
+	file ~/.ssh/* | grep -i 'private' | sed "s/:.*//" | while read key; do
+		eval `keychain --eval --agents ssh --ignore-missing $key`
+	done
 }
 
 function mfontc-keys-loaded() {
