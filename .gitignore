@@ -2,3 +2,5 @@
 bin/local/*
 !bin/local/README.txt
 oh-my-zsh/.zsh_*
+oh-my-zsh/autostart.d/*
+!oh-my-zsh/autostart.d/read.me

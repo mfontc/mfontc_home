@@ -1,8 +1,7 @@
-#!/bin/zsh
 # vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
 
 function __mfontc_keys_install_keychain() {
-	echo_ "\nUpdating packets list..."; sudo apt-get update           || return 1
+	echo_ "\nUpdating packets list..."; sudo apt-get -qq update       || return 1
 	echo_ "\nInstalling keychain...";   sudo apt-get install keychain || return 1
 }
 
@@ -10,49 +9,51 @@ function __mfontc_keys_install_keychain() {
 alias K='mfontc-keys-load'
 
 function mfontc-keys-load() {
-	which keychain &> /dev/null || {
-		__mfontc_keys_install_keychain || return 1
-	}
+	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
 
-	#eval `keychain --eval --agents ssh --timeout 60 --quick --quiet --ignore-missing ~/.ssh/*_rsa`
-	#eval `keychain --eval --agents ssh --timeout 60                 --ignore-missing ~/.ssh/*_rsa`
-	file ~/.ssh/* | grep -i 'private' | sed "s/:.*//" | while read key; do
-		eval `keychain --eval --agents ssh --ignore-missing $key`
-	done
+	# --timeout 60
+	# --quick
+	# --quiet
+	# --ignore-missing
+	eval `keychain         --agents ssh --ignore-missing --eval ~/.ssh/*_rsa(.N) ~/.ssh/*_dsa(.N)`
 }
 
-function mfontc-keys-loaded() {
+function mfontc-keys-loadq() {
+	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
+
+	eval `keychain --quiet --agents ssh --ignore-missing --eval ~/.ssh/*_rsa(.N) ~/.ssh/*_dsa(.N)`
+}
+
+function mfontc-keys-show() {
 	ssh-add -l
 }
 
 function mfontc-keys-clear() {
-	which keychain &> /dev/null || {
-		__mfontc_keys_install_keychain || return 1
-	}
+	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
 
 	keychain --clear
 }
 
-function mfontc-keys-clear2() {
-	which keychain &> /dev/null || {
-		__mfontc_keys_install_keychain || return 1
-	}
+function mfontc-keys-kill() {
+	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
 
-	keychain --stop all
+	# -k all / -k mine
+	keychain --stop mine
 }
 
 # ------------------------------------------------------------------------------
 function mfontc-keys-help() {
 	cat <<USAGE
 Requirements:
-    - keychain:     sudo apt-get install keychain
+    - keychain:            sudo apt-get install keychain
 
 Functions available:
     - mfontc-keys-load:    Load all your keys onto the agent.
-    - mfontc-keys-loaded:  Show the loaded keys.
+    - mfontc-keys-loadq:   Load all your keys onto the agent, quietly.
+    - mfontc-keys-show:    Show the loaded keys.
     - mfontc-keys-clear:   Unload the keys from the agent.
-    - mfontc-keys-clear2:  Unload the keys from the agent
-                           and kill currently running agent processes.
+    - mfontc-keys-kill:    Unload the keys from the agent and kill currently
+                             running agent processes.
     - mfontc-keys-help:    This message.
 
 How to disable the "GNOME Keyring SSH Agent":
@@ -62,6 +63,11 @@ How to disable the "GNOME Keyring SSH Agent":
     At that point, "SSH Key Agent - GNOME Keyring: SSH Agent" appeared in the
     Startup Applications manager, and you could uncheck it. Then, restart the
     session.
+
+Location and name of keys:
+    The scripts will find and use, by default, the keys that meet:
+    - ~/.ssh/*_rsa
+    - ~/.ssh/*_dsa
 
 More info:
     - https://github.com/funtoo/keychain

@@ -9,6 +9,9 @@ ZSH_MFONTC=$HOME_MFONTC/oh-my-zsh
 # Theme
 ZSH_THEME="mfontc"
 
+# Uncomment to hide user@host in the shell prompt
+#DEFAULT_USER=$USER
+
 # Set to this to use case-sensitive completion
 #CASE_SENSITIVE="true"
 
@@ -33,6 +36,7 @@ DISABLE_AUTO_TITLE="true"
 # Uncomment following line if you want to disable marking untracked files under VCS as dirty. This makes repository status check for large repositories much, much faster.
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
+# -----------------------------------------------------------------------------
 # Plugins
 if (( $UID == 0 )); then
 	plugins=(mfontc colorize colored-man command-not-found wd extract encode64)
@@ -61,22 +65,25 @@ bindkey -e        # Default to standard emacs bindings, regardless of editor str
 export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:$HOME/.composer/vendor/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
 
 # -----------------------------------------------------------------------------
-# FUNCTIONS PATH and AUTOLOADING
-fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "${fpath[@]}" )
-autoload -Uz mfontc-echoes && mfontc-echoes
-autoload -Uz mfontc-keys   && mfontc-keys
-autoload -Uz mfontc-pkg
-autoload -Uz mfontc-trickle
-
-# -----------------------------------------------------------------------------
 # SSH HOSTS from ~/.ssh/config
 [ -f ~/.ssh/config ] && : ${(A)ssh_config_hosts:=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
 
 zstyle ':completion:*:*:*' hosts $ssh_config_hosts $ssh
 
 # -----------------------------------------------------------------------------
-#
+# FUNCTIONS PATH and AUTOLOADING
+fpath=( $ZSH_MFONTC/zfuncs "${fpath[@]}" )
+autoload -Uz mfontc-echoes && mfontc-echoes
+autoload -Uz mfontc-keys   && mfontc-keys
+autoload -Uz mfontc-pkg
+autoload -Uz mfontc-trickle
 
 # -----------------------------------------------------------------------------
-#DEFAULT_USER=$USER
+# AutoStartScripts / ass ;)
+ass=($ZSH_MFONTC/autostart.d/*.sh(.N))
+for file in $ass[@]; do
+	if [[ -a "$file" ]]; then
+		source "$file"
+	fi
+done
 
