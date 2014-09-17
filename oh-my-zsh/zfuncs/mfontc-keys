@@ -9,7 +9,7 @@ function __mfontc_keys_install_keychain() {
 alias K='mfontc-keys-load'
 
 function mfontc-keys-load() {
-	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
+	which keychain &> /dev/null || { __mfontc_keys_install_keychain || return 1; }
 
 	# --timeout 60
 	# --quick
@@ -19,7 +19,7 @@ function mfontc-keys-load() {
 }
 
 function mfontc-keys-loadq() {
-	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
+	which keychain &> /dev/null || { __mfontc_keys_install_keychain || return 1; }
 
 	eval `keychain --quiet --agents ssh --ignore-missing --eval ~/.ssh/*_rsa(.N) ~/.ssh/*_dsa(.N)`
 }
@@ -29,16 +29,16 @@ function mfontc-keys-show() {
 }
 
 function mfontc-keys-clear() {
-	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
+	which keychain &> /dev/null || { __mfontc_keys_install_keychain || return 1; }
 
 	keychain --clear
 }
 
 function mfontc-keys-kill() {
-	which keychain &> /dev/null || { mfontc_keys_install_keychain || return 1; }
+	which keychain &> /dev/null || { __mfontc_keys_install_keychain || return 1; }
 
 	# -k all / -k mine
-	keychain --stop mine
+	keychain --stop all
 }
 
 # ------------------------------------------------------------------------------
