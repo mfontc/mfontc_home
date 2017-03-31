@@ -26,7 +26,7 @@ is_a_valid_vm () {
 vm_is_active () {
 	_vm="$1"
 	is_a_valid_vm "${_vm}"
-	VBoxManage list runningvms | grep -q "^\"${_vm}"
+	VBoxManage list runningvms | grep -q "^\"${_vm}\""
 }
 
 start_vm () {
