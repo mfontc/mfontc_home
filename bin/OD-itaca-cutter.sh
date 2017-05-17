@@ -86,26 +86,37 @@ for tag in \
     empresas_proveedoras \
     ensenanzas \
     evaluaciones \
+    faltas_alumno \
+    faltas_docentes \
     familiares \
     funciones_no_docente \
     grupos \
+    grupos_actividad \
     horarios_grupo \
+    horarios_ocupaciones \
     idiomas \
     justificaciones \
     lenguajes_vehiculares \
     lineas \
+    localidades \
     medidas_educativas \
     medidas_neses \
     modalidades_asistencia \
     motivos_sustitucion \
+    municipios \
     neses \
     no_docentes \
     ocupaciones \
     organismos \
+    paises \
     parentescos \
+    participantes_actividad \
+    planificaciones_actividad \
     plantillas_horario \
+    provincias \
     recursos_neses \
     recursos_personales \
+    responsables_actividad \
     sesiones_horario \
     tipos_actividad_complementaria \
     tipos_compensatorias \
@@ -116,13 +127,59 @@ for tag in \
     tipos_no_docente \
     tipos_nota \
     tipos_vias \
-    turnos \
-    localidades \
-    municipios \
-    provincias \
-    paises
+    turnos
 do
     touch_tag_from_xml_file "${tag}"
 done
 
+# Old tags
+#    actividades_complementarias \
+#    alumnos \
+#    aulas \
+#    categorias \
+#    compensatorias \
+#    contenidos \
+#    contenidos_alumno \
+#    cursos \
+#    cursos_grupo \
+#    denominaciones \
+#    docentes \
+#    empresas_proveedoras \
+#    ensenanzas \
+#    evaluaciones \
+#    familiares \
+#    funciones_no_docente \
+#    grupos \
+#    horarios_grupo \
+#    idiomas \
+#    justificaciones \
+#    lenguajes_vehiculares \
+#    lineas \
+#    medidas_educativas \
+#    medidas_neses \
+#    modalidades_asistencia \
+#    motivos_sustitucion \
+#    neses \
+#    no_docentes \
+#    ocupaciones \
+#    organismos \
+#    parentescos \
+#    plantillas_horario \
+#    recursos_neses \
+#    recursos_personales \
+#    sesiones_horario \
+#    tipos_actividad_complementaria \
+#    tipos_compensatorias \
+#    tipos_comportamiento \
+#    tipos_docente \
+#    tipos_documentos \
+#    tipos_nese \
+#    tipos_no_docente \
+#    tipos_nota \
+#    tipos_vias \
+#    turnos \
+#    localidades \
+#    municipios \
+#    provincias \
+#    paises
 

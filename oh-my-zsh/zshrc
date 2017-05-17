@@ -41,7 +41,7 @@ DISABLE_UNTRACKED_FILES_DIRTY="true"
 if (( $UID == 0 )); then
 	plugins=(mfontc colorize colored-man command-not-found wd extract encode64)
 else
-	plugins=(mfontc colorize colored-man command-not-found wd extract encode64 git git-extras composer symfony2 bower npm)
+	plugins=(mfontc colorize colored-man command-not-found wd extract encode64 git git-extras composer symfony2 bower npm git-flow-completion)
 fi
 
 source $ZSH/oh-my-zsh.sh
