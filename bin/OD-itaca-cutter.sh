@@ -14,10 +14,19 @@ CHK_xmllint() {
     }
 }
 
-xml_file_exists() {
+# ------------------------------------------------------------------------------
+
+_xmlFile=''
+setXmlFile() {
     fileXML="$1"
 
     if [[ -f "${fileXML}" ]]; then
+        _xmlFile="$(tempfile)"
+        if file "${fileXML}" | grep -q 'gzip' ; then
+            zcat "${fileXML}" > "${_xmlFile}"
+        else
+            cat  "${fileXML}" > "${_xmlFile}"
+        fi
         return 0
     else
         echo "### ERROR: No se ha especificado como parámetro ningún fichero XML de Itaca"
@@ -25,52 +34,73 @@ xml_file_exists() {
     fi
 }
 
-extract_tag_from_xml_file() {
-    file="$1"
-    tag="$2"
+delXmlFile() {
+    if [[ -f "${_xmlFile}" ]]; then
+        rm -f "${_xmlFile}"
+    fi
+}
 
-    # Creación del directorio
-    dir="xml_repared_${_now}"
-    mkdir -p "${dir}"
+# ------------------------------------------------------------------------------
+
+_parsedXmlDir=''
+setDirForParsedXml() {
+    fileXML="$1"
+
+    fileXML2="$( echo "$fileXML" | sed 's/[\. ]/_/g;s/[\/]//g;s/_gz$//;s/_xml$//' )"
+    _parsedXmlDir="${fileXML2}_parsed_${_now}"
+
+    mkdir -p "${_parsedXmlDir}"
+}
+
+# ------------------------------------------------------------------------------
+
+extract_tag_from_xml_file() {
+    tag="$1"
 
     # Creación del fichero XML parseado y reparado
-    new_file="${dir}/${tag}.xml"
-    echo ">>> $file > $tag"
-    cat "$file" | grep -o "<$tag>.*</$tag>" | xmllint --format --noblanks --encode UTF-8 - > "${new_file}"
+    newXmlTagFile="${_parsedXmlDir}/${tag}.xml"
+    echo -e "[${tag}]\t${newXmlTagFile}"
+    cat "$_xmlFile" | grep -o "<$tag>.*</$tag>" | xmllint --format --noblanks --encode UTF-8 - > "${newXmlTagFile}"
 
     return 0
 }
+
+# ------------------------------------------------------------------------------
 
 touch_tag_from_xml_file() {
     tag="$1"
 
-    # Creación del directorio
-    dir="xml_repared_${_now}"
-    mkdir -p "${dir}"
-
     # Toque al fichero XML (si no existe, se crea!)
-    new_file="${dir}/${tag}.xml"
-    touch "${new_file}"
+    newXmlTagFile="${_parsedXmlDir}/${tag}.xml"
+    touch "${newXmlTagFile}"
 
     return 0
 }
 
-get_tags_from_xml_file() {
-    file="$1"
+# ------------------------------------------------------------------------------
 
-    cat "${file}" | xmllint --format --noblanks --encode UTF-8 - | grep " *<[^ /]*>" | sed "s/ *<//" | sed "s/>//" | sort -u
+get_tags_from_xml_file() {
+    cat "${_xmlFile}" | xmllint --format --noblanks --encode UTF-8 - | grep " *<[^ /]*>" | sed "s/ *<//" | sed "s/>//" | sort -u
 }
 
-file="$1"
+# ------------------------------------------------------------------------------
 
 CHK_xmllint
 
-xml_file_exists "$file"
+file="$1"
+setXmlFile "$file"
+setDirForParsedXml "$file"
 
-for tag in $(get_tags_from_xml_file "${file}" ); do
-    extract_tag_from_xml_file "${file}" "${tag}"
+for tag in $(get_tags_from_xml_file ); do
+    extract_tag_from_xml_file "${tag}"
 done
 
+delXmlFile
+
+#
+exit 0
+
+#
 for tag in \
     actividades_complementarias \
     alumnos \
