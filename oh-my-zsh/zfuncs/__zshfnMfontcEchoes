@@ -1,0 +1,20 @@
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
+
+function echoS() {       print -P -- "\e[32m$*\e[0m"; }
+function echoW() {       print -P -- "\e[33m$*\e[0m"; }
+function echoD() {       print -P -- "\e[31m$*\e[0m" 1>&2; }
+function echoI() {       print -P -- "\e[94m$*\e[0m"; }
+function echoH1() {      print -P -- "\e[36m\n\n\n\e[1;2m[   H1    ]\e[22;1m ------------------------------------------------------------------------------\n\e[1;2m[   H1    ]\e[22;1m \e[4m$*\e[24m\n\e[1;2m[   H1    ]\e[22;1m ------------------------------------------------------------------------------\e[0m"; }
+function echoH2() {      print -P -- "\e[36m\n\e[2m[   H2    ]\e[22m \e[4m$*\e[24m\e[0m"; }
+function echoIn() {      echoI       "\e[2m[  INFO   ]\e[22m $*"; }
+function echoOk() {      echoS       "\e[2m[   OK    ]\e[22m $*"; }
+function echoWa() {      echoW       "\e[2m[ WARNING ]\e[22m $*"; }
+function echoEr() {      echoD       "\e[2m[  ERROR  ]\e[22m $*"; }
+function echoCmd() {     print -P -- "\e[2;100m\n[   CMD   ]\e[22m \e[1;92m$*\e[0m"; }
+function echoCallIni() { print -P -- "\e[2;35m\n\n\n[  CALL   ] $* (start)\e[0m"; }
+function echoCallEnd() { print -P -- "\e[2;35m\n[  CALL   ] $* (ended)\e[0m"; }
+function echoQ() {       print -P -n -- "\e[1;40;33m$*\e[0m"; }
+
+# @deprecated
+function echo_() { echoS "<<<echo_ IS DEPRECATED>>> $*"; }
+function echoE() { echoD "<<<echoE IS DEPRECATED>>> $*"; }

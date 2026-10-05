@@ -1,6 +1,22 @@
-*.swp
+###> IDE, unison, devel mark ###
+/.idea
+/.unison
+/.devel
+/.develAuth
+*.bk.gz
+###< IDE, unison, devel mark ###
+
+###> custom
 bin/local/*
 !bin/local/README.txt
 oh-my-zsh/.zsh_*
 oh-my-zsh/autostart.d/*
 !oh-my-zsh/autostart.d/read.me
+###< custom
+
+###> temp files directories
+oh-my-zsh/cache/*
+!oh-my-zsh/cache/.gitkeep
+oh-my-zsh/log/*
+!oh-my-zsh/log/.gitkeep
+###< temp files directories

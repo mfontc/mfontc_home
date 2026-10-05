@@ -1,19 +1,22 @@
-#!/bin/zsh
-# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+#!/usr/bin/env zsh
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
+
+scriptAbsPath="$( cd "${0%/*}" &>/dev/null && echo "${PWD}/${0##*/}" )"
+scriptBasePath=$( dirname "${scriptAbsPath}" )
 
 cat <<README-ME
 
-cat > keychain.sh <<KEYCHAIN-SH
-# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
-fpath=( ~/.mfontc_home/oh-my-zsh/zfuncs "\\\${fpath[@]}" ) && autoload -Uz mfontc-keys && mfontc-keys && mfontc-keys-loadq
+cat > "${scriptBasePath}/keychain.sh" <<KEYCHAIN-SH
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
+mfontcKeysLoadq
 KEYCHAIN-SH
-chmod u+x keychain.sh
+chmod u+x "${scriptBasePath}/keychain.sh"
 
-cat > default_user.sh <<DEFAULT_USER-SH
-# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+cat > "${scriptBasePath}/default_user.sh" <<DEFAULT_USER-SH
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
 DEFAULT_USER=\\\${USER}
 DEFAULT_USER-SH
-chmod u+x default_user.sh
+chmod u+x "${scriptBasePath}/default_user.sh"
 
 README-ME
 

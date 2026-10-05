@@ -6,7 +6,6 @@ startup_message off
 bind f eval "caption splitonly" "hardstatus ignore"
 bind F eval "caption always"    "hardstatus alwayslastline"
 
-
 #
 # look and feel for the bottom two lines.
 #

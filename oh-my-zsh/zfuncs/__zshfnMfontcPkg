@@ -1,0 +1,52 @@
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
+
+mfontcPkgUpgrade() {
+  echoH2 "Updating packets list, upgrading system and cleaning cache data"
+  echoCmd "sudo apt-get update"
+  sudo apt-get update || return 1
+  echoCmd "sudo apt-get dist-upgrade"
+  sudo apt-get dist-upgrade || return 1
+  echoCmd "sudo apt-get clean"
+  sudo apt-get clean || return 1
+
+  echoH2 "Autocleaning and autoremoving packages"
+  echoCmd "sudo apt-get autoclean"
+  sudo apt-get autoclean
+  echoCmd "sudo apt-get autoremove"
+  sudo apt-get autoremove
+
+  echoH2 "Cleaning configuration files of deleted packages"
+  echoCmd "dpkg -l | grep -i ^rc"
+  if dpkg -l | grep -i ^rc ; then
+    echoCmd "sudo dpkg -P \\\\\$( dpkg -l | grep -i ^rc | awk '{print \\\\\$2}' )"
+    sudo dpkg -P $( dpkg -l | grep -i ^rc | awk '{print $2}' )
+  else
+    echoIn "There are no more deleted packages with configuration files to delete"
+  fi
+}
+
+mfontcPkgShowDownloadables() {
+  apt-get -qq --print-uris dist-upgrade 2> /dev/null | awk '{ printf "%9.2f %s\n", $3/1024, $1 }' | sort -rn
+}
+
+mfontcPkgDeborphan() {
+  which deborphan &> /dev/null || {
+    echoCmd "sudo apt-get update";            sudo apt-get update            || return 1
+    echoCmd "sudo apt-get install deborphan"; sudo apt-get install deborphan || return 1
+  }
+
+  while [ -n "`deborphan`" ]; do
+    echoCmd "sudo apt-get purge `deborphan | paste -s -d' '`"
+    sudo apt-get purge `deborphan | paste -s -d' '` || return 1
+  done
+}
+
+mfontcPkgDeborphanShow() {
+  which deborphan &> /dev/null || {
+    echoCmd "sudo apt-get update";            sudo apt-get update            || return 1
+    echoCmd "sudo apt-get install deborphan"; sudo apt-get install deborphan || return 1
+  }
+
+  echoCmd "deborphan --all-packages --no-show-section --show-priority --show-size | sort -n"
+  deborphan --all-packages --no-show-section --show-priority --show-size | sort -n
+}

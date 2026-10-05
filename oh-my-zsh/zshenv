@@ -1,0 +1,19 @@
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
+
+# ------------------------------------------------------------------------------
+# Se creará siempre un enlace sobre ~/.zshenv sobre este script.
+# Esto permitirá que sea ejecutado tanto en el login shell (como también se carga ~/.zshrc),
+# sino también sobre todo aquel script cuyo shebang (primera linea del mismo) sea: «#!/usr/bin/env zsh».
+#
+# Con esto conseguimos que las funciones tipo «echo...» esten siempre disponibles
+# y no se necesite el «autoload -Uz ...» en todos los scripts.
+# ------------------------------------------------------------------------------
+
+ZSH=${HOME}/.oh-my-zsh
+MFONTC_HOME="${HOME}/.mfontc_home"
+MFONTC_ZSH="${MFONTC_HOME}/oh-my-zsh"
+
+export PATH="${MFONTC_HOME}/bin:${MFONTC_HOME}/bin/local:${HOME}/.local/bin:${HOME}/bin:${HOME}/scripts:${HOME}/.composer/vendor/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:/snap/bin"
+
+fpath=( "${MFONTC_HOME}/oh-my-zsh/zfuncs" "${fpath[@]}" )
+autoload -Uz __zshfnMfontcEchoes && __zshfnMfontcEchoes

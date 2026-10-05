@@ -1,10 +1,11 @@
-# vim:ft=zsh ts=4 sw=4 sts=4 noexpandtab
+# vim: ft=zsh ts=2 sw=2 sts=2 noexpandtab
 
 # -----------------------------------------------------------------------------
 # ZSH configuration
-ZSH=$HOME/.oh-my-zsh
-HOME_MFONTC=$HOME/.mfontc_home
-ZSH_MFONTC=$HOME_MFONTC/oh-my-zsh
+ZSH=${HOME}/.oh-my-zsh
+MFONTC_HOME="${HOME}/.mfontc_home"
+MFONTC_ZSH="${MFONTC_HOME}/oh-my-zsh"
+MFONTC_ZSH_CACHE_DIR="${MFONTC_ZSH}/cache"
 
 # Theme
 ZSH_THEME="mfontc"
@@ -16,7 +17,10 @@ ZSH_THEME="mfontc"
 #CASE_SENSITIVE="true"
 
 # Uncomment this to disable bi-weekly auto-update checks
-DISABLE_AUTO_UPDATE="true"
+# DISABLE_AUTO_UPDATE="true"
+
+# [2018-11-08] Actualizaciones automáticas (si es que no están deshabilitadas).
+DISABLE_UPDATE_PROMPT="true"
 
 # Uncomment to change how often before auto-updates occur? (in days)
 # export UPDATE_ZSH_DAYS=13
@@ -37,21 +41,46 @@ DISABLE_AUTO_TITLE="true"
 DISABLE_UNTRACKED_FILES_DIRTY="true"
 
 # -----------------------------------------------------------------------------
+# Check for updates on initial load…
+if [ "$DISABLE_AUTO_UPDATE" != "true" ]; then
+  env MFONTC_ZSH=$MFONTC_ZSH MFONTC_ZSH_CACHE_DIR=$MFONTC_ZSH_CACHE_DIR DISABLE_UPDATE_PROMPT=$DISABLE_UPDATE_PROMPT zsh -f "${MFONTC_ZSH}/tools/check_for_upgrade.sh"
+fi
+
+# -----------------------------------------------------------------------------
 # Plugins
 if (( $UID == 0 )); then
-	plugins=(mfontc colorize colored-man command-not-found wd extract encode64)
+  plugins=(mfontc colorize colored-man-pages command-not-found wd extract encode64)
 else
-	plugins=(mfontc colorize colored-man command-not-found wd extract encode64 git git-extras composer symfony2 bower npm git-flow-completion)
+  plugins=(mfontc colorize colored-man-pages command-not-found wd extract encode64)
 fi
 
 source $ZSH/oh-my-zsh.sh
 
 # -----------------------------------------------------------------------------
 # History configuration
-HISTSIZE=10000
-SAVEHIST=10000
-[ "$ZSH_MFONTC" ] && HISTFILE=$ZSH_MFONTC/.zsh_history || ~/.zsh_history
-HIST_STAMPS="yyyy-mm-dd"
+#HISTSIZE=10000
+#SAVEHIST=10000
+SAVEHIST=9000
+HISTSIZE=9999                   # set HISTSIZE > SAVEHIST
+
+setopt EXTENDED_HISTORY         # include timestamp
+setopt HIST_BEEP                # beep if attempting to access a history entry which isn’t there
+setopt HIST_EXPIRE_DUPS_FIRST   # trim dupes first if history is full
+setopt HIST_FIND_NO_DUPS        # do not display previously found command
+setopt HIST_IGNORE_DUPS         # do not save duplicate of prior command
+setopt HIST_IGNORE_SPACE        # do not save if line starts with space
+setopt HIST_NO_STORE            # do not save history commands
+setopt HIST_REDUCE_BLANKS       # strip superfluous blanks
+setopt INC_APPEND_HISTORY       # don’t wait for shell to exit to save history lines
+
+if [ "${MFONTC_ZSH}" ]; then
+  HISTFILE="${MFONTC_ZSH}/.zsh_history"
+  if [ -f "${HOME}/.zsh_history" ]; then
+    rm -f "${HOME}/.zsh_history"
+  fi
+else
+  HISTFILE="${HOME}/.zsh_history"
+fi
 
 # -----------------------------------------------------------------------------
 # Bindkeys: To see the key combo you want to use just do "cat > /dev/null" and press it
@@ -61,32 +90,37 @@ bindkey "[A"      history-search-backward              # up arrow
 bindkey -e        # Default to standard emacs bindings, regardless of editor string
 
 # -----------------------------------------------------------------------------
-# PATHS
-export PATH="$HOME_MFONTC/bin:$HOME_MFONTC/bin/local:$HOME/bin:$HOME/scripts:$HOME/.composer/vendor/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
-
-# -----------------------------------------------------------------------------
-# SSH HOSTS from ~/.ssh/config
+# SSH HOSTS from ${HOME}/.ssh/config
 [ -f ~/.ssh/config ] && : ${(A)ssh_config_hosts:=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
 
 zstyle ':completion:*:*:*' hosts $ssh_config_hosts $ssh
 
 # -----------------------------------------------------------------------------
-# FUNCTIONS PATH and AUTOLOADING
-fpath=( $ZSH_MFONTC/zfuncs "${fpath[@]}" )
-autoload -Uz mfontc-echoes && mfontc-echoes
-autoload -Uz mfontc-keys   && mfontc-keys
-autoload -Uz mfontc-pkg
-autoload -Uz mfontc-trickle
+# Creates the ${HOME}/.zshenv link to ${HOME}/.mfontc_home/oh-my-zsh/zshenv if not exists
+_zshenvWanted=${HOME}/.zshenv
+_zshenvTarget=$(readlink -f "${_zshenvWanted}")
+_zshenvReal="${MFONTC_ZSH}/zshenv"
+if [[ "${_zshenvTarget}" != "${_zshenvReal}" ]]; then
+  rm -f "${_zshenvWanted}"
+  ln -s "${_zshenvReal}" "${_zshenvWanted}"
+
+  # And, since it has not been loaded, it is loaded automatically
+  source "${_zshenvReal}"
+fi
+
+# Autoload functions other than __zshfnMfontcEchoes (already loaded from ${HOME}/.zshenv)
+#fpath=( "${MFONTC_ZSH}/zfuncs" "${fpath[@]}" )
+autoload -Uz __zshfnMfontcKeys && __zshfnMfontcKeys
+autoload -Uz __zshfnMfontcPkg  && __zshfnMfontcPkg
 
 # -----------------------------------------------------------------------------
 # AutoStartScripts / ass ;)
-ass=($ZSH_MFONTC/autostart.d/*.sh(.N))
+ass=(${MFONTC_ZSH}/autostart.d/*.sh(.N))
 for file in $ass[@]; do
-	if [[ -a "$file" ]]; then
-		source "$file"
-	fi
+  if [[ -a "$file" ]]; then
+    source "$file"
+  fi
 done
 
 # -----------------------------------------------------------------------------
 umask 0007
-
